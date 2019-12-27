@@ -356,7 +356,7 @@ death_count_check_time = 1
 
 
 # initiating game start
-start_game("Stromel1x", [0, 0], 200)
+start_game("SUPERVISOR_NAME", [0, 0], 200)
 
 while stats_control_ok:
     pass
