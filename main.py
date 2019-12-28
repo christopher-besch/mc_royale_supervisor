@@ -11,7 +11,7 @@ from random import randint
 # a message can also be send to only one player
 def text(mcr, msg, col, recipient="@a", console=False):
     if console:
-        mcr.command('/tellraw {} title {{"text":"","extra":[{{"text":"{}","color":"{}"}}]}}'.format(recipient, msg, col))
+        mcr.command('/tellraw {} {{"text":"{}","color":"{}"}}'.format(recipient, msg, col))
     else:
         mcr.command('/title {} title {{"text":"","extra":[{{"text":"{}","color":"{}"}}]}}'.format(recipient, msg, col))
 
@@ -60,11 +60,11 @@ def kill_control():
                 # requesting information
                 resp = mcr.command("/scoreboard players get {} deathCount".format(player.name))
                 # extracting current value
-                if "none is set" in resp:
-                    player.stats["deathCount"] = 0
+                if "[deathCount]" in resp:
+                    player.stats["deathCount"] = int(resp.split(" has ")[1].split(" [")[0])
                 else:
                     # when deathCount is unknown it is 0
-                    player.stats["deathCount"] = int(resp.split(" has ")[1].split(" [")[0])
+                    player.stats["deathCount"] = 0
 
                 # every player that has reached the max allowed death count loses
                 if player.stats["deathCount"] >= max_deaths:
@@ -85,6 +85,8 @@ def kill_control():
 # move border to designated target
 def move_border(old_center, old_border_diameter, center, border_diameter, delta_time, steps=1):
     global server_ip, server_password
+    # waiting 10 seconds to avoid any problems with other orders at the round start
+    sleep(10)
     # connect to server
     with MCRcon(server_ip, server_password) as mcr:
         # one step per second (starting by 1; ending by delta_time)
@@ -190,8 +192,6 @@ def start_game(supervisor_name, location, diameter, tp_height=120):
         # updating the stage objective
         mcr.command("/scoreboard players set @a stage {}".format(current_stage))
 
-        # add countdown!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
         # wait 10 sec.
         sleep(10)
 
@@ -212,6 +212,9 @@ def start_game(supervisor_name, location, diameter, tp_height=120):
         old_center = location
         old_border_diameter = diameter
         for stage in stages:
+            # when the game is over, the script ends
+            if not stats_control_ok:
+                return
             # the next stage needs the newly created border parameters as old values
             old_center, old_border_diameter = stage.execute(mcr, old_center, old_border_diameter)
 
@@ -260,7 +263,7 @@ class Stage:
     # time between shrinking ending and start of next stage
     after_time = None
 
-    def __init__(self, index, effects, border_diameter, time_until_shrink, delta_time, after_time):
+    def __init__(self, index, time_until_shrink, delta_time, after_time, effects=None, border_diameter=None):
         self.index = index
 
         self.effects = effects
@@ -279,38 +282,72 @@ class Stage:
         # updating the stage objective
         mcr.command("/scoreboard players set @a stage {}".format(self.index))
         # sending warning
-        text(mcr, "STAGE ELEVATED TO {}".format(self.index), "red")
+        text(mcr, "STAGE ELEVATED", "red")
         # playing sound
         play(mcr, "minecraft:entity.elder_guardian.curse", 0.1)
 
-        # applying every requested effect to every player (except for the supervisor)
-        for player in players:
-            # every terminated player will be ignored
-            if player.terminated:
-                continue
-            for effect in self.effects:
-                mcr.command("/effect give {} {} {}".format(player.name, effect.name, effect.duration))
+        # when effects have to be applied
+        if self.effects is not None:
+            # applying every requested effect to every player (except for the supervisor)
+            for player in players:
+                # every terminated player will be ignored
+                if player.terminated:
+                    continue
+                for effect in self.effects:
+                    cmd = "/effect give {} {} {} {}".format(player.name, effect.name, effect.duration, effect.strength)
+                    mcr.command(cmd)
 
-        # move border to random new location inside old border
-        # calculating where the new center can be
-        # old_center[0] - (old_border_diameter / 2) gives the x coordinate of one side of the current border
-        # + (border_diameter / 2) going the radius of the new border back into the old border
-        x_range_1st = old_center[0] - (old_border_diameter / 2) + (self.border_diameter / 2)
-        x_range_2nd = old_center[0] + (old_border_diameter / 2) - (self.border_diameter / 2)
-        x_range = [x_range_1st, x_range_2nd]
+        # when the border is supposed to shrink, a warning will be send and a new center will be calculated
+        if self.border_diameter is not None:
+            # calculating where the new center can be; it must be inside the ld border
+            # old_center[0] - (old_border_diameter / 2) gives the x coordinate of one side of the current border
+            # + (border_diameter / 2) going the radius of the new border back into the old border
+            x_range_1st = old_center[0] - (old_border_diameter / 2) + (self.border_diameter / 2)
+            x_range_2nd = old_center[0] + (old_border_diameter / 2) - (self.border_diameter / 2)
+            x_range = [x_range_1st, x_range_2nd]
 
-        z_range_1st = old_center[1] - (old_border_diameter / 2) + (self.border_diameter / 2)
-        z_range_2nd = old_center[1] + (old_border_diameter / 2) - (self.border_diameter / 2)
-        z_range = [z_range_1st, z_range_2nd]
+            z_range_1st = old_center[1] - (old_border_diameter / 2) + (self.border_diameter / 2)
+            z_range_2nd = old_center[1] + (old_border_diameter / 2) - (self.border_diameter / 2)
+            z_range = [z_range_1st, z_range_2nd]
 
-        # picking a location
-        center = [randint(x_range[0], x_range[1]), randint(z_range[0], z_range[1])]
+            # picking a location
+            center = [randint(x_range[0], x_range[1]), randint(z_range[0], z_range[1])]
 
-        # shrinking the world border
-        _thread.start_new_thread(move_border, (old_center, old_border_diameter, center, self.border_diameter, self.delta_time))
+            small_x = center[0] - (self.border_diameter / 2)
+            big_x = center[0] + (self.border_diameter / 2)
+            small_z = center[1] - (self.border_diameter / 2)
+            big_z = center[1] + (self.border_diameter / 2)
 
-        # waiting until next stage
-        sleep(self.after_time)
+            msgs = [["WARNING: the border is about to shrink in {} seconds!".format(self.time_until_shrink), "red"],
+                    ["Center: {} {}".format(center[0], center[1]), "green"],
+                    ["Corners:", "blue"],
+                    ["{} {}     {} {} ↑N".format(small_x, small_z, small_x, big_z), "blue"],
+                    ["{} {}     {} {}".format(big_x, small_z, big_x, big_z), "blue"]]
+
+            for msg in msgs:
+                text(mcr, msg[0], msg[1], console=True)
+
+            # waiting until border shrink
+            sleep(self.time_until_shrink)
+
+            # send warning
+            text(mcr, "WARNING: the border is shrinking!", "red", console=True)
+
+            # shrinking the world border
+            parameters = (old_center, old_border_diameter, center, self.border_diameter, self.delta_time)
+            _thread.start_new_thread(move_border, parameters)
+        # when the border does not have to to move
+        else:
+            # the center stays where it is if the border does not move
+            center = old_center
+            # same with the border diameter
+            self.border_diameter = old_border_diameter
+
+            # adding time until the border had to shrink to after_time
+            self.after_time += self.time_until_shrink
+
+        # waiting until next stage = time the border needs to shrink + after_time
+        sleep(self.after_time + self.delta_time)
         # returning current state of the border
         return center, self.border_diameter
 
@@ -332,18 +369,14 @@ player_count = None
 # current stage
 current_stage = None
 # list with every stage
-stages = [Stage(1,
-                [Effect("minecraft:invisibility", 10, 1),
-                 Effect("minecraft:speed", 10, 1)],
-                100, 0, 20, 25),
-          Stage(2,
-                [Effect("minecraft:invisibility", 10, 1),
-                 Effect("minecraft:speed", 10, 255)],
-                50, 0, 20, 25),
-          Stage(3,
-                [Effect("minecraft:invisibility", 10, 1),
-                 Effect("minecraft:speed", 10, 255)],
-                10, 0, 20, 25)]
+# def __init__(self, index, time_until_shrink, delta_time, after_time, effects=None, border_diameter=None):
+stages = [Stage(1, 0, 0, 5,
+                effects=[Effect("minecraft:invisibility", 10, 1),
+                         Effect("minecraft:speed", 10, 255)]),
+          Stage(2, 5, 20, 5,
+                border_diameter=100),
+          Stage(2, 10, 20, 5,
+                border_diameter=10)]
 
 # supervisor coins
 coins = 0
@@ -352,7 +385,7 @@ stats_control_ok = False
 # amount of deaths after which the player will be set into spectator mode
 max_deaths = 2
 # time between every death count check in sec.
-death_count_check_time = 1
+death_count_check_time = 2
 
 
 # initiating game start
