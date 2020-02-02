@@ -140,6 +140,11 @@ def start_game(supervisor_name, location, diameter, tp_height=120):
             for objective in objectives:
                 mcr.command("/scoreboard objectives remove {}".format(objective))
 
+        # setting the randomTickSpeed to a higher value
+        mcr.command("/gamerule randomTickSpeed 6")
+        # always keeping the current weather and time of day
+        mcr.command("/gamerule doDaylightCycle false")
+        mcr.command("/gamerule doWeatherCycle false")
         # making day
         mcr.command("/time set day")
         # clearing the weather
@@ -147,9 +152,18 @@ def start_game(supervisor_name, location, diameter, tp_height=120):
         # everyone in adventure mode
         mcr.command("/gamemode adventure @a")
         # set world spawn to the middle of the map
-        mcr.command("/setworldspawn {} {} {}".format(location[0], tp_height, location[1]))
+        mcr.command("/setworldspawn {} ~ {}".format(location[0], location[1]))
+        # remove every advancement
+        mcr.command("/advancement revoke @a everything")
+        # deactivate keepInventory
+        mcr.command("/gamerule keepInventory false")
         # kill everyone
         mcr.command("/kill @a")
+        sleep(0.2)
+        # kill every drop
+        mcr.command("/kill @e[type=minecraft:item]")
+        # reactivate keepInventory
+        mcr.command("/gamerule keepInventory true")
 
         # wait 5 sec.
         sleep(5)
@@ -253,6 +267,10 @@ class Stage:
     # list of every effect that has to be applied at the start of the stage
     effects = []
 
+    # environment variables
+    weather = None
+    time = None
+
     # border settings
     border_diameter = None
 
@@ -263,10 +281,13 @@ class Stage:
     # time between shrinking ending and start of next stage
     after_time = None
 
-    def __init__(self, index, time_until_shrink, delta_time, after_time, effects=None, border_diameter=None):
+    def __init__(self, index, time_until_shrink, delta_time, after_time, effects=None, border_diameter=None, weather=None, time=None):
         self.index = index
 
         self.effects = effects
+
+        self.weather = weather
+        self.time = time
 
         self.border_diameter = border_diameter
 
@@ -285,6 +306,13 @@ class Stage:
         text(mcr, "STAGE ELEVATED", "red")
         # playing sound
         play(mcr, "minecraft:entity.elder_guardian.curse", 0.1)
+
+        # change weather and time of day if necessary
+        if self.weather is not None:
+            mcr.command("/weather {}".format(self.weather))
+        # change current time of day if necessary
+        if self.time is not None:
+            mcr.command("/time set {}".format(self.time))
 
         # when effects have to be applied
         if self.effects is not None:
@@ -312,6 +340,8 @@ class Stage:
 
             # picking a location
             center = [randint(x_range[0], x_range[1]), randint(z_range[0], z_range[1])]
+            # set world spawn into the new middle
+            mcr.command("/setworldspawn {} ~ {}".format(center[0], center[1]))
 
             small_x = center[0] - (self.border_diameter / 2)
             big_x = center[0] + (self.border_diameter / 2)
@@ -353,8 +383,8 @@ class Stage:
 
 
 # minecraft rcon server details
-server_ip = "YOUR_SERVER_IP"
-server_password = "YOUR_RCON_PASSWORD"
+server_ip = "192.168.178.22"
+server_password = "tv1O1S3QJlUk3pKeRO2u"
 # stats to track
 stats = ["deathCount",
          "totalKillCount",
@@ -370,26 +400,36 @@ player_count = None
 current_stage = None
 # list with every stage
 # def __init__(self, index, time_until_shrink, delta_time, after_time, effects=None, border_diameter=None):
-stages = [Stage(1, 0, 0, 5,
-                effects=[Effect("minecraft:invisibility", 10, 1),
-                         Effect("minecraft:speed", 10, 255)]),
-          Stage(2, 5, 20, 5,
-                border_diameter=100),
-          Stage(2, 10, 20, 5,
-                border_diameter=10)]
+# stages = [Stage(1, 0, 0, 300,
+                # effects=[Effect("minecraft:invisibility", 60, 1),
+                         # Effect("minecraft:speed", 30, 1)]),
+          # Stage(2, 300, 60, 300,
+                # border_diameter=1000),
+          # Stage(3, 300, 40, 300,
+                # border_diameter=500),
+          # Stage(4, 300, 40, 0,
+                # effects=[Effect("minecraft:strength", 10, 2)],
+                # border_diameter=100)]
+
+stages = [Stage(1, 0, 0, 20,
+                effects=[Effect("minecraft:invisibility", 20, 1)]),
+          Stage(2, 0, 10, 60,
+                border_diameter=10,
+                weather="thunder",
+                time="night")]
 
 # supervisor coins
 coins = 0
 # False to stop stats control
 stats_control_ok = False
 # amount of deaths after which the player will be set into spectator mode
-max_deaths = 2
+max_deaths = 4
 # time between every death count check in sec.
 death_count_check_time = 2
 
 
 # initiating game start
-start_game("SUPERVISOR_NAME", [0, 0], 200)
+start_game("Stromel1x", [0, 0], 100)
 
 while stats_control_ok:
     pass
