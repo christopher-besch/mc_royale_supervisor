@@ -164,6 +164,8 @@ def start_game(supervisor_name, location, diameter, tp_height=120):
         mcr.command("/kill @e[type=minecraft:item]")
         # reactivate keepInventory
         mcr.command("/gamerule keepInventory true")
+        # give everyone a compass to find the middle of the map
+        mcr.command("/give @a minecraft:compass")
 
         # wait 5 sec.
         sleep(5)
@@ -363,7 +365,7 @@ class Stage:
             # send warning
             text(mcr, "WARNING: the border is shrinking!", "red", console=True)
 
-            # shrinking the world border
+            # shrinking the world border in a second thread
             parameters = (old_center, old_border_diameter, center, self.border_diameter, self.delta_time)
             _thread.start_new_thread(move_border, parameters)
         # when the border does not have to to move
