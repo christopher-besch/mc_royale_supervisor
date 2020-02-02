@@ -428,10 +428,3 @@ stats_control_ok = False
 max_deaths = 4
 # time between every death count check in sec.
 death_count_check_time = 2
-
-
-# initiating game start
-start_game("Stromel1x", [0, 0], 100)
-
-while stats_control_ok:
-    pass
