@@ -6,6 +6,16 @@ from mcrcon import MCRcon
 from random import randint
 
 
+# modified sleep function with integrated interrupt
+def sleep_stop(delta_time):
+    global stats_control_ok
+    for i in range(0, delta_time):
+        if not stats_control_ok:
+            _thread.exit()
+            break
+        sleep(1)
+
+
 # displaying a message on everyone's screen
 # if console is True, the text will be send to everyone's console instead
 # a message can also be send to only one player
@@ -42,6 +52,8 @@ def kill_control():
                     play(mcr, "minecraft:entity.ender_dragon.death", 1)
                     # ending round
                     stats_control_ok = False
+                    # kill thread
+                    _thread.exit()
                     return
                 # if nobody is still alive
                 # displaying draw
@@ -49,6 +61,8 @@ def kill_control():
                 play(mcr, "minecraft:entity.ender_dragon.death", 1)
                 # ending round
                 stats_control_ok = False
+                # kill thread
+                _thread.exit()
                 return
 
             # updating every players death counter
@@ -84,13 +98,17 @@ def kill_control():
 
 # move border to designated target
 def move_border(old_center, old_border_diameter, center, border_diameter, delta_time, steps=1):
-    global server_ip, server_password
+    global server_ip, server_password, stats_control_ok
     # waiting 10 seconds to avoid any problems with other orders at the round start
     sleep(10)
     # connect to server
     with MCRcon(server_ip, server_password) as mcr:
         # one step per second (starting by 1; ending by delta_time)
         for n in range(1, delta_time + 1):
+            # end shrink when someone won
+            if not stats_control_ok:
+                break
+
             # calculating new diameter with a linear equation
             # y=m*x+n
             # m=gradient=(delta y)/(delta x)=(border_diameter - old_border_diameter) / delta_time
@@ -164,8 +182,6 @@ def start_game(supervisor_name, location, diameter, tp_height=120):
         mcr.command("/kill @e[type=minecraft:item]")
         # reactivate keepInventory
         mcr.command("/gamerule keepInventory true")
-        # give everyone a compass to find the middle of the map
-        mcr.command("/give @a minecraft:compass")
 
         # wait 5 sec.
         sleep(5)
@@ -174,6 +190,8 @@ def start_game(supervisor_name, location, diameter, tp_height=120):
         mcr.command("/effect give @a minecraft:jump_boost 10000 137")
         mcr.command("/effect give @a minecraft:slowness 10000 255")
         mcr.command("/effect give @a minecraft:absorption 10000 255")
+        # give everyone a compass to find the middle of the map
+        mcr.command("/give @a minecraft:compass")
 
         # calculation coordinates of borders
         x_range_1st = location[0] - (diameter / 2)
@@ -342,7 +360,7 @@ class Stage:
 
             # picking a location
             center = [randint(x_range[0], x_range[1]), randint(z_range[0], z_range[1])]
-            # set world spawn into the new middle
+            # set world spawn into the new middle -> new location for compass
             mcr.command("/setworldspawn {} ~ {}".format(center[0], center[1]))
 
             small_x = center[0] - (self.border_diameter / 2)
@@ -360,7 +378,7 @@ class Stage:
                 text(mcr, msg[0], msg[1], console=True)
 
             # waiting until border shrink
-            sleep(self.time_until_shrink)
+            sleep_stop(self.time_until_shrink)
 
             # send warning
             text(mcr, "WARNING: the border is shrinking!", "red", console=True)
@@ -379,7 +397,7 @@ class Stage:
             self.after_time += self.time_until_shrink
 
         # waiting until next stage = time the border needs to shrink + after_time
-        sleep(self.after_time + self.delta_time)
+        sleep_stop(self.after_time + self.delta_time)
         # returning current state of the border
         return center, self.border_diameter
 
