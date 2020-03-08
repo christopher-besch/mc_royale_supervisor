@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <h1>User overview</h1>
+    {# user table #}
+    <table class="table">
+    {# head #}
+    <thead>
+        <tr>
+            <th scope="col">username</th>
+            <th scope="col">delete</th>
+            <th scope="col">change password</th>
+            <th scope="col">last seen</th>
+            <th scope="col">tutorial</th>
+        </tr>
+    </thead>
+    {# body #}
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.username }}</td>
+
+            {# every user besides the admin can be deleted #}
+            {% if user.username == 'admin' %}
+                <td>unavailable</td>
+            {% else %}
+                <td><a href="{{ url_for('main.delete', username=user.username) }}">delete</a></td>
+            {% endif %}
+
+            <td><a href="{{ url_for('auth.password_change', username=user.username) }}">change password</a></td>
+            <td>{{ moment(user.last_seen).fromNow() }}</td>
+            <td>{{ user.tutorial }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+
+    {# register a new user #}
+    <h1>Register a new user</h1>
+    <div class="row">
+        <div class="col-md-4">
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
+
+{% endblock %}

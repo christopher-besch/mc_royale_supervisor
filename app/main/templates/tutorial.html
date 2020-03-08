@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>Welcome {{ current_user.username }}!</h1>
+
+    <p>[TUTORIAL HERE]</p>
+
+    <span class="continue_button">
+        <button type="button" class="btn btn-success">Continue</button>
+    </span>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        //what to do when button is clicked
+        $('.continue_button').click(endTutorial);
+        function endTutorial() {
+            $.post('{{ url_for("main.change_tutorial_state") }}', {new_state: false}).done(function(response) {
+                window.location = "{{ url_for('main.index') }}";
+            })
+        }
+    </script>
+{% endblock %}

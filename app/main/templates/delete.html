@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<p>Are you sure you want to permanently remove  {{ user.username }}?</p>
+{# deletion button #}
+<span class="delete_link">
+<button type="button" class="btn btn-danger" disabled>Delete {{ user.username }}</button>
+</span>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        // wait 3 seconds until the link gets armed
+        window.setTimeout(function() {
+            let linkHtml = "<button type=\"button\" class=\"btn btn-danger\">Delete {{ user.username }}</button>";
+
+            $('.delete_link').html(linkHtml).click(deleteUser);
+        }, 3000);
+        // declaring function
+        function deleteUser() {
+            // creating ajax request
+            $.post('{{ url_for("main.confirmed_delete") }}', {username: "{{ user.username }}"}).done(function(response) {
+                if (response['success']) {
+                    $('.delete_link').html('<p>{{ user.username }} was successfully deleted!</p>')
+                }else {
+                    $('.delete_link').html('<p>An error occurred!</p>')
+                }
+            }).fail(function() {
+                $('.delete_link').html('<p>An error occurred!</p>')
+            });
+            window.setTimeout(function() {
+                window.location = "{{ url_for('main.admin') }}";
+            }, 2000);
+        }
+    </script>
+{% endblock %}
