@@ -16,6 +16,10 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
+                {# mc head #}
+                {% if current_user.mc_name %}
+                    <img src="https://crafatar.com/renders/head/{{ current_user.mc_uuid }}" style="height:45px; width:45px;">
+                {% endif %}
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
@@ -25,15 +29,18 @@
 
                     {% else %}
                         {% if not current_user.tutorial %}
-                            {# lobby#}
-                            <li><a href="{{ url_for('main.index') }}">Main</a></li>
-                            {# change password #}
-                            <li><a href="{{ url_for('auth.password_change', username=current_user.username) }}">Change Password</a></li>
                             {# admin page #}
-                            {% if current_user.username == 'admin' %}
+                            <li><a href="{{ url_for('main.index') }}">Main</a></li>
+
+                            {# admin page if admin#}
+                            {% if current_user.is_admin %}
                                 <li><a href="{{ url_for('main.admin') }}">Admin Page</a></li>
                             {% endif %}
+
+                            {# change password #}
+                            <li><a href="{{ url_for('auth.password_change', username=current_user.username) }}">Change Password</a></li>
                         {% endif %}
+
                         {# logout #}
                         <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
                     {% endif %}

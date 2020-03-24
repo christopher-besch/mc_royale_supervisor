@@ -3,34 +3,104 @@
 
 {% block app_content %}
     <h1>User overview</h1>
+    <table>
+        <tr>
+            <td>🌟</td>
+            <td>Admin</td>
+        </tr>
+        <tr>
+            <td>👑</td>
+            <td>Supervisor</td>
+        </tr>
+        <tr>
+            <td>🚩</td>
+            <td>In Tutorial</td>
+        </tr>
+    </table>
     {# user table #}
     <table class="table">
     {# head #}
     <thead>
         <tr>
-            <th scope="col">username</th>
-            <th scope="col">delete</th>
-            <th scope="col">change password</th>
+            <th scope="col">head</th>
+            <th scope="col">name</th>
             <th scope="col">last seen</th>
-            <th scope="col">tutorial</th>
+            <th scope="col">options</th>
         </tr>
     </thead>
     {# body #}
     <tbody>
         {% for user in users %}
         <tr>
-            <td>{{ user.username }}</td>
+            <td>
+                {# get skin and mc name when uuid available #}
+                {% if user.mc_name %}
+                    <img src="https://crafatar.com/renders/head/{{ user.mc_uuid }}" style="height:80px; width:80px;">
+                {% endif %}
+            </td>
 
-            {# every user besides the admin can be deleted #}
-            {% if user.username == 'admin' %}
-                <td>unavailable</td>
-            {% else %}
-                <td><a href="{{ url_for('main.delete', username=user.username) }}">delete</a></td>
-            {% endif %}
+            <td>
+                {# username and indicators for current position #}
+                {{ user.username }}
+                {% if user.is_admin %}🌟{% endif %}
+                {% if user.is_supervisor %}👑{% endif %}
+                {% if user.tutorial %}🚩{% endif %}
+            </td>
 
-            <td><a href="{{ url_for('auth.password_change', username=user.username) }}">change password</a></td>
             <td>{{ moment(user.last_seen).fromNow() }}</td>
-            <td>{{ user.tutorial }}</td>
+
+            <td>
+                {# options table #}
+                <table>
+                    <tr>
+                        <th>
+                            {% if not user.is_supervisor %}
+                                <button type="button" class="btn btn-success" onclick="make_supervisor('{{ user.username }}');">Make Supervisor</button>
+                            {% else %}
+                                <button type="button" class="btn btn-outline-success" disabled>Make Supervisor</button>
+                            {% endif %}
+                        </th>
+                        <th>
+                            {% if user.username != current_user.username %}
+                                <a type="button" class="btn btn-warning" href="{{ url_for('auth.password_change', username=user.username) }}">Change Password</a>
+                            {% else %}
+                                <a type="button" class="btn btn-outline-warning" href="#" disabled>Change Password</a>
+                            {% endif %}
+                        </th>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            {% if not user.is_admin %}
+                                <button type="button" class="btn btn-warning" onclick="change_admin_state('{{ user.username }}', true);">Make Admin</button>
+                            {% else %}
+                                <button type="button" class="btn btn-outline-warning" disabled>Make Admin</button>
+                            {% endif %}
+                        </th>
+                        <th>
+                            {% if user.is_admin and user.username != current_user.username %}
+                                <button type="button" class="btn btn-danger" onclick="change_admin_state('{{ user.username }}', false);">Revoke Admin Privileges</button>
+                            {% else %}
+                                <button type="button" class="btn btn-outline-danger" disabled>Revoke Admin Privileges</button>
+                            {% endif %}
+                        </th>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            {# empty cell #}
+                        </th>
+                        <th>
+                            {% if user.username != current_user.username %}
+                                <a type="button" class="btn btn-danger" href="{{ url_for('main.delete', username=user.username) }}">Delete User</a>
+                            {% else %}
+                                <a type="button" class="btn btn-outline-danger" href="#" disabled>Delete User</a>
+                            {% endif %}
+                        </th>
+                    </tr>
+                </table>
+            </td>
+
         </tr>
         {% endfor %}
     </tbody>
@@ -43,5 +113,29 @@
             {{ wtf.quick_form(form) }}
         </div>
     </div>
+    {# line break for spacing #}
+    </br>
 
 {% endblock %}
+
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        function make_supervisor(username) {
+            // creating ajax request
+            $.post('{{ url_for("main.make_supervisor") }}', {username: username}).done(function(response) {
+                // reloading page
+                location.reload();
+            });
+        }
+
+        function change_admin_state(username, new_state) {
+            // creating ajax request
+            $.post('{{ url_for("main.change_admin_state") }}', {username: username, new_state: new_state}).done(function(response) {
+                // reloading page
+                location.reload();
+            });
+        }
+    </script>
+{% endblock %}}

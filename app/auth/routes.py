@@ -35,7 +35,7 @@ def logout():
 @bp.route('/password_change/<username>', methods=['GET', 'POST'])
 @login_required
 def password_change(username):
-    # only the admin and the user who needs the password change is allowed
+    # only an admin and the user who needs the password change is allowed
     if current_user.username != 'admin' and current_user.username != username:
         return redirect(url_for('main.index'))
 
