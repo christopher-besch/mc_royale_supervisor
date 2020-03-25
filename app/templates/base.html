@@ -19,6 +19,10 @@
                 {# mc head #}
                 {% if current_user.mc_name %}
                     <img src="https://crafatar.com/renders/head/{{ current_user.mc_uuid }}" style="height:45px; width:45px;">
+                    {# state emojis #}
+                    {% if current_user.is_admin %}🌟{% endif %}
+                    {% if current_user.is_supervisor %}👑{% endif %}
+                    {% if current_user.tutorial %}🚩{% endif %}
                 {% endif %}
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -28,9 +32,19 @@
                         <li><a href="{{ url_for('auth.login') }}">Login</a></li>
 
                     {% else %}
-                        {% if not current_user.tutorial %}
-                            {# admin page #}
-                            <li><a href="{{ url_for('main.index') }}">Main</a></li>
+                        {% if current_user.tutorial %}
+                        {# tutorial page #}
+                        <li><a href="{{ url_for('main.tutorial') }}">Tutorial</a></li>
+
+                        {% else %}
+                            {% if current_user.is_supervisor %}
+                                {# supervisor page #}
+                                <li><a href="{{ url_for('main.supervisor') }}">Supervisor Page</a></li>
+
+                            {% else %}
+                                {# normal user page #}
+                                <li><a href="{{ url_for('main.overview') }}">Overview</a></li>
+                            {% endif %}
 
                             {# admin page if admin#}
                             {% if current_user.is_admin %}

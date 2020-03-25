@@ -36,7 +36,7 @@ def logout():
 @login_required
 def password_change(username):
     # only an admin and the user who needs the password change is allowed
-    if current_user.username != 'admin' and current_user.username != username:
+    if not current_user.is_admin and current_user.username != username:
         return redirect(url_for('main.index'))
 
     # when the user does not exist, the password can not be changed

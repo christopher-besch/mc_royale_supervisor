@@ -4,4 +4,5 @@ from flask import Blueprint
 bp = Blueprint('main', __name__, template_folder='templates')
 
 # load other scripts
-from app.main import routes
+from app.main import routes_main
+from app.main import routes_admin
