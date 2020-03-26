@@ -24,3 +24,7 @@ class Config(object):
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     ADMINS = ['ADMIN_EMAILS_HERE']
+
+    # mc rcon server settings
+    MC_SERVER_IP = os.environ.get('MC_SERVER_IP')
+    MC_SERVER_PASSWORD = os.environ.get('MC_SERVER_PASSWORD')

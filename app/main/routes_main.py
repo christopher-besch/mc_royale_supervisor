@@ -3,6 +3,7 @@ from flask import render_template, redirect, url_for, jsonify, request
 from flask_login import current_user, login_required
 from app import db
 from app.main import bp
+import mc_royale
 
 
 # save last seen time
@@ -52,6 +53,14 @@ def supervisor():
     # only supervisors can enter this page
     if not current_user.is_supervisor:
         return redirect(url_for('main.index'))
+
+    stages = [mc_royale.Stage(1, 0, 0, 20,
+                              effects=[mc_royale.Effect("minecraft:invisibility", 20, 1)]),
+              mc_royale.Stage(2, 0, 10, 60,
+                              border_diameter=10, weather="thunder", time="night")]
+
+    # start game
+    match = mc_royale.Match("IDIOT", [0, 0], 100, stages)
 
     return render_template('supervisor.html', title='Supervisor Page')
 
