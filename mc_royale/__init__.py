@@ -392,7 +392,8 @@ class Match:
                 # m=gradient=(delta y)/(delta x)=(border_diameter - old_border_diameter) / delta_time
                 # x=current step=n
                 # n=offset=old_border_diameter
-                temp_diameter = ((border_diameter - self.current_border_diameter) / delta_time) * n + self.current_border_diameter
+                temp_diameter = \
+                    ((border_diameter - self.current_border_diameter) / delta_time) * n + self.current_border_diameter
 
                 # calculation a new temporary center, similar t temp_diameter
                 temp_x = ((center[0] - self.current_center[0]) / delta_time) * n + self.current_center[0]

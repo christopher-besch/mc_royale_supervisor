@@ -5,4 +5,14 @@
     <orderEntry type="jdk" jdkName="Python 3.8" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
+  <component name="TemplatesService">
+    <option name="TEMPLATE_FOLDERS">
+      <list>
+        <option value="$MODULE_DIR$/app/auth/templates" />
+        <option value="$MODULE_DIR$/app/errors/templates" />
+        <option value="$MODULE_DIR$/app/main/templates" />
+        <option value="$MODULE_DIR$/app/templates" />
+      </list>
+    </option>
+  </component>
 </module>

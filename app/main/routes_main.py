@@ -60,7 +60,7 @@ def supervisor():
                               border_diameter=10, weather="thunder", time="night")]
 
     # start game
-    match = mc_royale.Match("IDIOT", [0, 0], 100, stages)
+    mc_royale.Match("IDIOT", [0, 0], 100, stages)
 
     return render_template('supervisor.html', title='Supervisor Page')
 
