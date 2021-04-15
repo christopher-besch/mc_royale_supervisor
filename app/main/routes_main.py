@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask import render_template, redirect, url_for, jsonify, request
 from flask_login import current_user, login_required
-from app import db
+from app import db, match
 from app.main import bp
 import mc_royale
 
@@ -54,19 +54,13 @@ def supervisor():
     if not current_user.is_supervisor:
         return redirect(url_for('main.index'))
 
-    stages = [mc_royale.Stage(1, 0, 0, 20,
-                              effects=[mc_royale.Effect("minecraft:invisibility", 20, 1)]),
-              mc_royale.Stage(2, 0, 10, 60,
-                              border_diameter=10, weather="thunder", time="night")]
+    match.game_setup(current_user.username)
 
-    # start game
-    mc_royale.Match("IDIOT", [0, 0], 100, stages)
-
-    return render_template('supervisor.html', title='Supervisor Page')
+    return render_template('supervisor.html', title='Supervisor Page', match=match)
 
 
 # overview page for every other user
 @bp.route('/overview')
 @login_required
 def overview():
-    return render_template('overview.html', title='Supervisor Page')
+    return render_template('overview.html', title='Overview Page')

@@ -8,6 +8,7 @@ from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from config import Config
+from mc_royale import Match, Stage, Effect
 
 # global app object
 app = Flask(__name__)
@@ -23,6 +24,15 @@ login.login_view = 'auth.login'
 bootstrap = Bootstrap(app)
 # time conversion
 moment = Moment(app)
+
+# minecraft battle royale settings
+start_diameter = 100
+stages = [Stage(1, 0, 0, 20,
+                effects=[Effect("minecraft:invisibility", 20, 1)]),
+          Stage(2, 0, 10, 60,
+                border_diameter=10, weather="thunder", time="night")]
+# minecraft match class instance
+match = Match(start_diameter, stages)
 
 # activating logging when the application is not in debug mode
 if not app.debug:
@@ -57,12 +67,15 @@ if not app.debug:
 
 # implementing blueprints
 from app.main import bp as main_bp
+
 app.register_blueprint(main_bp)
 
 from app.auth import bp as auth_bp
+
 app.register_blueprint(auth_bp)
 
 from app.errors import bp as errors_bp
+
 app.register_blueprint(errors_bp)
 
 # implementing database models

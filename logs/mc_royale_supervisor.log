@@ -1,0 +1,56 @@
+2020-03-28 09:13:00,682 INFO: mc_royale_supervisor startup [in C:\Users\Stromel\Data\mc_royale_supervisor\mc_royale_supervisor\app\__init__.py:66]
+2020-03-28 09:13:39,061 INFO: mc_royale_supervisor startup [in C:\Users\Stromel\Data\mc_royale_supervisor\mc_royale_supervisor\app\__init__.py:66]
+2020-03-28 09:14:01,284 INFO: mc_royale_supervisor startup [in C:\Users\Stromel\Data\mc_royale_supervisor\mc_royale_supervisor\app\__init__.py:66]
+2020-03-28 09:14:19,707 INFO: mc_royale_supervisor startup [in C:\Users\Stromel\Data\mc_royale_supervisor\mc_royale_supervisor\app\__init__.py:66]
+2020-03-28 09:16:58,826 INFO: mc_royale_supervisor startup [in C:\Users\Stromel\Data\mc_royale_supervisor\mc_royale_supervisor\app\__init__.py:66]
+2020-03-28 09:17:01,071 ERROR: Exception on /admin [GET] [in c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask\app.py:1890]
+Traceback (most recent call last):
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask\app.py", line 2446, in wsgi_app
+    response = self.full_dispatch_request()
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask\app.py", line 1951, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask\app.py", line 1820, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask\_compat.py", line 39, in reraise
+    raise value
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask\app.py", line 1949, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask\app.py", line 1935, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask_login\utils.py", line 261, in decorated_view
+    return func(*args, **kwargs)
+  File "C:\Users\Stromel\Data\mc_royale_supervisor\mc_royale_supervisor\app\main\routes_admin.py", line 30, in admin
+    return render_template('admin.html', title="Admin Page", users=users, form=form, match=match)
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask\templating.py", line 137, in render_template
+    return _render(
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask\templating.py", line 120, in _render
+    rv = template.render(context)
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\jinja2\asyncsupport.py", line 76, in render
+    return original_render(self, *args, **kwargs)
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\jinja2\environment.py", line 1008, in render
+    return self.environment.handle_exception(exc_info, True)
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\jinja2\environment.py", line 780, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\jinja2\_compat.py", line 37, in reraise
+    raise value.with_traceback(tb)
+  File "C:\Users\Stromel\Data\mc_royale_supervisor\mc_royale_supervisor\app\main\templates\admin.html", line 2, in <module>
+    {% import 'bootstrap/wtf.html' as wtf %}
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\jinja2\environment.py", line 1005, in render
+    return concat(self.root_render_func(self.new_context(vars)))
+  File "C:\Users\Stromel\Data\mc_royale_supervisor\mc_royale_supervisor\app\main\templates\admin.html", line 17, in root
+    <td>Supervisor</td>
+  File "C:\Users\Stromel\Data\mc_royale_supervisor\mc_royale_supervisor\app\templates\base.html", line 14, in root
+    {# three lines in icon #}
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask_bootstrap\templates\bootstrap\base.html", line 10, in root
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask_bootstrap\templates\bootstrap\base.html", line 20, in block_doc
+    {% block body -%}
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask_bootstrap\templates\bootstrap\base.html", line 39, in block_html
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask_bootstrap\templates\bootstrap\base.html", line 90, in block_body
+  File "C:\Users\Stromel\Data\mc_royale_supervisor\mc_royale_supervisor\app\templates\base.html", line 47, in block_navbar
+    <li><a href="{{ url_for('main.overview') }}">Overview</a></li>
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\jinja2\environment.py", line 430, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'user' is undefined
+2020-03-28 09:17:16,642 INFO: mc_royale_supervisor startup [in C:\Users\Stromel\Data\mc_royale_supervisor\mc_royale_supervisor\app\__init__.py:66]
+2020-05-28 19:15:44,370 INFO: mc_royale_supervisor startup [in C:\Users\Stromel\Data\mc_royale_supervisor\mc_royale_supervisor\app\__init__.py:66]

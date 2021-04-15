@@ -5,6 +5,10 @@
     <h1>User overview</h1>
     <table>
         <tr>
+            <td>🌐</td>
+            <td>Minecraft User</td>
+        </tr>
+        <tr>
             <td>🌟</td>
             <td>Admin</td>
         </tr>
@@ -33,8 +37,8 @@
         {% for user in users %}
         <tr>
             <td>
-                {# get skin and mc name when uuid available #}
-                {% if user.mc_name %}
+                {# get skin when uuid available #}
+                {% if user.mc_uuid %}
                     <img src="https://crafatar.com/renders/head/{{ user.mc_uuid }}" style="height:80px; width:80px;">
                 {% endif %}
             </td>
@@ -42,6 +46,7 @@
             <td>
                 {# username and indicators for current position #}
                 {{ user.username }}
+                {% if user.mc_uuid %}🌐{% endif %}
                 {% if user.is_admin %}🌟{% endif %}
                 {% if user.is_supervisor %}👑{% endif %}
                 {% if user.tutorial %}🚩{% endif %}
@@ -54,7 +59,8 @@
                 <table>
                     <tr>
                         <th>
-                            {% if not user.is_supervisor %}
+                            {# when the user is not a supervisor or the match is currently running #}
+                            {% if not user.is_supervisor or match.running %}
                                 <button type="button" class="btn btn-success" onclick="make_supervisor('{{ user.username }}');">Make Supervisor</button>
                             {% else %}
                                 <button type="button" class="btn btn-outline-success" disabled>Make Supervisor</button>

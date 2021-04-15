@@ -17,13 +17,14 @@
                     <span class="icon-bar"></span>
                 </button>
                 {# mc head #}
-                {% if current_user.mc_name %}
+                {% if current_user.mc_uuid %}
                     <img src="https://crafatar.com/renders/head/{{ current_user.mc_uuid }}" style="height:45px; width:45px;">
-                    {# state emojis #}
-                    {% if current_user.is_admin %}🌟{% endif %}
-                    {% if current_user.is_supervisor %}👑{% endif %}
-                    {% if current_user.tutorial %}🚩{% endif %}
                 {% endif %}
+                {# state emojis #}
+                {% if current_user.mc_uuid %}🌐{% endif %}
+                {% if current_user.is_admin %}🌟{% endif %}
+                {% if current_user.is_supervisor %}👑{% endif %}
+                {% if current_user.tutorial %}🚩{% endif %}
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">

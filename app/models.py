@@ -16,7 +16,6 @@ class User(UserMixin, db.Model):
     is_admin = db.Column(db.Boolean, default=False)
 
     # mc data
-    mc_name = db.Column(db.String(64))
     mc_uuid = db.Column(db.String(64))
 
     def __repr__(self):
@@ -33,7 +32,6 @@ class User(UserMixin, db.Model):
         player = GetPlayerData(self.username)
         if player.valid:
             self.mc_uuid = player.uuid
-            self.mc_name = player.username
             return True
         else:
             return False

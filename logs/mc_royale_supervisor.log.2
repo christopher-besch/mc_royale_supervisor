@@ -1,0 +1,63 @@
+2020-03-25 20:33:42,371 INFO: mc_royale_supervisor startup [in C:\Users\Stromel\Data\mc_royale_supervisor\mc_royale_supervisor\app\__init__.py:56]
+2020-03-26 10:39:04,980 INFO: mc_royale_supervisor startup [in C:\Users\Stromel\Data\mc_royale_supervisor\mc_royale_supervisor\app\__init__.py:56]
+2020-03-26 10:41:42,654 ERROR: Exception on /supervisor [GET] [in c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask\app.py:1890]
+Traceback (most recent call last):
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask\app.py", line 2446, in wsgi_app
+    response = self.full_dispatch_request()
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask\app.py", line 1951, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask\app.py", line 1820, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask\_compat.py", line 39, in reraise
+    raise value
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask\app.py", line 1949, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask\app.py", line 1935, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask_login\utils.py", line 261, in decorated_view
+    return func(*args, **kwargs)
+  File "C:\Users\Stromel\Data\mc_royale_supervisor\mc_royale_supervisor\app\main\routes_main.py", line 58, in supervisor
+    match = mc_royale.Match("IDIOT", [0, 0], 100)
+  File "C:\Users\Stromel\Data\mc_royale_supervisor\mc_royale_supervisor\mc_royale\__init__.py", line 181, in __init__
+    with MCRcon(Config.MC_SERVER_IP, Config.MAIL_PASSWORD) as mcr:
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\mcrcon.py", line 42, in __enter__
+    self.connect()
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\mcrcon.py", line 63, in connect
+    self._send(3, self.password)
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\mcrcon.py", line 81, in _send
+    out_payload = struct.pack('<ii', 0, out_type) + out_data.encode('utf8') + b'\x00\x00'
+AttributeError: 'NoneType' object has no attribute 'encode'
+2020-03-26 10:43:13,219 INFO: mc_royale_supervisor startup [in C:\Users\Stromel\Data\mc_royale_supervisor\mc_royale_supervisor\app\__init__.py:56]
+2020-03-26 10:43:15,195 ERROR: Exception on /supervisor [GET] [in c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask\app.py:1890]
+Traceback (most recent call last):
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask\app.py", line 2446, in wsgi_app
+    response = self.full_dispatch_request()
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask\app.py", line 1951, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask\app.py", line 1820, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask\_compat.py", line 39, in reraise
+    raise value
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask\app.py", line 1949, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask\app.py", line 1935, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\flask_login\utils.py", line 261, in decorated_view
+    return func(*args, **kwargs)
+  File "C:\Users\Stromel\Data\mc_royale_supervisor\mc_royale_supervisor\app\main\routes_main.py", line 58, in supervisor
+    match = mc_royale.Match("IDIOT", [0, 0], 100)
+  File "C:\Users\Stromel\Data\mc_royale_supervisor\mc_royale_supervisor\mc_royale\__init__.py", line 183, in __init__
+    with MCRcon(Config.MC_SERVER_IP, Config.MAIL_PASSWORD) as mcr:
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\mcrcon.py", line 42, in __enter__
+    self.connect()
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\mcrcon.py", line 63, in connect
+    self._send(3, self.password)
+  File "c:\users\stromel\appdata\local\programs\python\python38\lib\site-packages\mcrcon.py", line 81, in _send
+    out_payload = struct.pack('<ii', 0, out_type) + out_data.encode('utf8') + b'\x00\x00'
+AttributeError: 'NoneType' object has no attribute 'encode'
+2020-03-26 10:44:08,423 INFO: mc_royale_supervisor startup [in C:\Users\Stromel\Data\mc_royale_supervisor\mc_royale_supervisor\app\__init__.py:56]
+2020-03-27 19:24:53,690 INFO: mc_royale_supervisor startup [in C:\Users\Stromel\Data\mc_royale_supervisor\mc_royale_supervisor\app\__init__.py:56]
+2020-03-28 09:02:49,898 INFO: mc_royale_supervisor startup [in C:\Users\Stromel\Data\mc_royale_supervisor\mc_royale_supervisor\app\__init__.py:66]
+2020-03-28 09:04:46,642 INFO: mc_royale_supervisor startup [in C:\Users\Stromel\Data\mc_royale_supervisor\mc_royale_supervisor\app\__init__.py:66]
+2020-03-28 09:05:10,834 INFO: mc_royale_supervisor startup [in C:\Users\Stromel\Data\mc_royale_supervisor\mc_royale_supervisor\app\__init__.py:66]
+2020-03-28 09:06:27,826 INFO: mc_royale_supervisor startup [in C:\Users\Stromel\Data\mc_royale_supervisor\mc_royale_supervisor\app\__init__.py:66]

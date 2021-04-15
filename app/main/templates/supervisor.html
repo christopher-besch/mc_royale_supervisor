@@ -1,8 +1,65 @@
 {% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
+    <h1>Player overview</h1>
+    <h2>
+        Current Supervisor:
+        {# get skin when uuid available #}
+        {% if current_user.mc_uuid %}
+            <img src="https://crafatar.com/renders/head/{{ current_user.mc_uuid }}" style="height:35px; width:35px;">
+        {% endif %}
+        {{ current_user.username }}
+    </h2>
+    {# player table #}
+    <table class="table">
+    {# head #}
+    <thead>
+        <tr>
+            <th scope="col">head</th>
+            <th scope="col">name</th>
+        </tr>
+    </thead>
+    {# body #}
+    <tbody>
+        {% for player in match.players %}
+        <tr>
+            <td>
+                {# get skin when uuid available #}
+                {% if player.uuid %}
+                    <img src="https://crafatar.com/renders/head/{{ player.uuid }}" style="height:80px; width:80px;">
+                {% endif %}
+            </td>
 
+            <td>
+                {{ player.name }}
+            </td>
 
-    <p>Hello World</p>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
 
 {% endblock %}
+
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        function make_supervisor(username) {
+            // creating ajax request
+            $.post('{{ url_for("main.make_supervisor") }}', {username: username}).done(function(response) {
+                // reloading page
+                location.reload();
+            });
+        }
+
+        function change_admin_state(username, new_state) {
+            // creating ajax request
+            $.post('{{ url_for("main.change_admin_state") }}', {username: username, new_state: new_state}).done(function(response) {
+                // reloading page
+                location.reload();
+            });
+        }
+    </script>
+{% endblock %}}

@@ -1,6 +1,6 @@
 from flask import render_template, redirect, url_for, flash, jsonify, request
 from flask_login import current_user, login_required
-from app import db
+from app import db, match
 from app.main import bp
 from app.models import User
 from app.forms import RegistrationForm
@@ -27,15 +27,15 @@ def admin():
         return redirect(url_for('main.admin'))
 
     users = User.query.order_by(User.id)
-    return render_template('admin.html', title="Admin Page", users=users, form=form)
+    return render_template('admin.html', title="Admin Page", users=users, form=form, match=match)
 
 
 # make supervisor (ajax)
 @bp.route('/make_supervisor', methods=['POST'])
 @login_required
 def make_supervisor():
-    # only an admin is allowed
-    if not current_user.is_admin:
+    # only an admin is allowed and only when the match isn't already running
+    if not current_user.is_admin or match.running:
         return redirect(url_for('main.index'))
 
     # searching for user

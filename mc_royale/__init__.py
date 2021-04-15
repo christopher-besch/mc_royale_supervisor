@@ -3,6 +3,7 @@ from time import sleep
 from mcrcon import MCRcon
 from random import randint
 from config import Config
+from mcuuid.api import GetPlayerData
 
 
 # displaying a message on everyone's screen
@@ -20,6 +21,16 @@ def play(mcr, sound, pitch, recipient="@a"):
     mcr.command("/playsound {} voice {} ~ ~ ~ 1000 {}".format(sound, recipient, pitch))
 
 
+def get_player_names():
+    # connect to RCON server
+    with MCRcon(Config.MC_SERVER_IP, Config.MC_SERVER_PASSWORD) as mcr:
+        # get list of every player on the server
+        player_names = mcr.command("/list")
+        player_names = player_names.split(": ")[1].split(", ")
+
+        return player_names
+
+
 # class for minecraft users
 class Player:
     # terminated = lost
@@ -28,6 +39,12 @@ class Player:
     def __init__(self, match, name):
         # saving player name
         self.name = name
+        # get uuid
+        player = GetPlayerData(self.name)
+        if player.valid:
+            self.uuid = player.uuid
+        else:
+            self.uuid = None
         # copying stats from match object into dictionary
         self.stats = {}
         for stat in match.stats:
@@ -151,7 +168,7 @@ class Stage:
 # class for a whole match
 class Match:
     # False when every thread used by this match should be terminated
-    running = True
+    running = False
     # list with every player
     players = []
     # the current stage; it gets elevated after every stage change
@@ -167,22 +184,24 @@ class Match:
              "level",
              "xp",
              "armor"]
+    # name of the current supervisor
+    supervisor_name = ""
+    # current center of the play area
+    current_center = []
 
-    # starting the game
-    def __init__(self, supervisor_name, location, diameter, stages, tp_height=120, max_deaths=3):
-        # name of the current supervisor
-        self.supervisor_name = supervisor_name
-        # current center of the play area
-        self.current_center = location
+    def __init__(self, diameter, stages, tp_height=120, max_deaths=3):
         # current diameter of the play area
         self.current_border_diameter = diameter
         # list with every stage that has to be executed
         self.stages = stages
-
         # height to teleport players to
         self.tp_height = tp_height
         # maximum of allowed death after which the player loses
         self.max_deaths = max_deaths
+
+    def game_setup(self, supervisor_name):
+        # update variables
+        self.supervisor_name = supervisor_name
 
         # connect to RCON server
         with MCRcon(Config.MC_SERVER_IP, Config.MC_SERVER_PASSWORD) as mcr:
@@ -195,10 +214,20 @@ class Match:
             if self.supervisor_name in player_names:
                 del player_names[player_names.index(self.supervisor_name)]
 
+            # list with every player
+            self.players = []
             # creating player objects
             for player_name in player_names:
                 self.players.append(Player(self, player_name))
 
+    def start_game(self, location):
+        # update variables
+        self.current_center = location
+        # allow new threads
+        self.running = True
+
+        # connect to RCON server
+        with MCRcon(Config.MC_SERVER_IP, Config.MC_SERVER_PASSWORD) as mcr:
             # get list of every objective
             rsp = mcr.command("/scoreboard objectives list")
             # when there are already objectives, they will be removed
